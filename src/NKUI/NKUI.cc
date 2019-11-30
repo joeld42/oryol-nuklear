@@ -9,6 +9,7 @@
 namespace Oryol {
 
 NKUI::_state* NKUI::state = nullptr;
+bool NKUI::_shouldHandleInput = true;
 
 //------------------------------------------------------------------------------
 void
@@ -32,12 +33,25 @@ bool
 NKUI::IsValid() {
     return nullptr != state;
 }
+    
+void NKUI::SetShouldHandleInput( bool shouldHandleInput )
+{
+    NKUI::_shouldHandleInput = shouldHandleInput;
+}
 
+bool NKUI::ShouldHandleInput()
+{
+    return NKUI::_shouldHandleInput;
+}
+    
 //------------------------------------------------------------------------------
 nk_context*
 NKUI::NewFrame() {
     o_assert_dbg(IsValid());
-    state->nkuiWrapper.NewFrame();
+    
+    if (_shouldHandleInput) {
+        state->nkuiWrapper.NewFrame();
+    }
     return &state->nkuiWrapper.ctx;
 }
 

@@ -25,6 +25,7 @@ public:
 
     /// start a new frame (handles nuklear input)
     static nk_context* NewFrame();
+    
     /// get pointer to nuklear context (if needed away from NewFrame())
     static nk_context* Ctx();
     /// draw the nuklear UI
@@ -43,12 +44,18 @@ public:
     static nk_font* AddFont(const Buffer& ttfData, float fontHeight);
     /// end defining font atlas
     static void EndFontAtlas();
+    
+    static void SetShouldHandleInput( bool shouldHandleInput );
+    
+    static bool ShouldHandleInput();
 
 private:
     struct _state {
         _priv::nkuiWrapper nkuiWrapper;
     };
     static _state* state;
+    
+    static bool _shouldHandleInput;
 };
 
 //------------------------------------------------------------------------------
