@@ -48,6 +48,10 @@ nkuiWrapper::Setup(const NKUISetup& setup) {
     nk_buffer_init_default(&this->cmds);
     nk_buffer_init_fixed(&vbuf, this->vertexData, sizeof(this->vertexData));
     nk_buffer_init_fixed(&ibuf, this->indexData, sizeof(this->indexData));
+    
+    touchPressed = false;
+    touchPosX = -1;
+    touchPosY = -1;
 }
 
 //------------------------------------------------------------------------------
@@ -231,6 +235,36 @@ nkuiWrapper::NewFrame() {
         nk_input_button(&this->ctx, NK_BUTTON_LEFT, x, y, lmb);
         nk_input_button(&this->ctx, NK_BUTTON_MIDDLE, x, y, mmb);
         nk_input_button(&this->ctx, NK_BUTTON_RIGHT, x, y, rmb);
+    }
+    if (Input::TouchpadAttached()) {
+        
+        // Track if touch is pressed
+        if (Input::TouchStarted())
+        {
+            touchPressed = true;
+        }
+        else if (Input::TouchEnded())
+        {
+            touchPressed = false;
+        }
+        
+        // convert a tap back to a one-frame tap.. blegh
+        bool touchTapped = Input::TouchTapped();
+        
+        if ((touchPressed) || (touchTapped)|| (Input::TouchMoved()) )
+        {
+            const glm::vec2& touchPos = Input::TouchPosition(0);
+            touchPosX = int(touchPos.x);
+            touchPosY = int(touchPos.y);
+        }
+        
+        nk_input_motion(&this->ctx, touchPosX, touchPosY );
+        bool emulateLMB = touchPressed || touchTapped;
+        nk_input_button(&this->ctx, NK_BUTTON_LEFT, touchPosX, touchPosY, emulateLMB );
+        printf("input %d,%d LMB %s\n", touchPosX, touchPosY, (emulateLMB)?"TRUE":"false" );
+        
+        // TODO: use the pinch to emuate scroll?
+        
     }
     nk_input_end(&this->ctx);
 }

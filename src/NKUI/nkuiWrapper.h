@@ -80,6 +80,10 @@ private:
     Array<int> freeImageSlots;
     int curFontAtlas = 0;
     StaticArray<nk_font_atlas, MaxNumFontAtlases> fontAtlases;
+    
+    bool touchPressed;
+    int touchPosX;
+    int touchPosY;
 
     struct nkui_draw_vertex vertexData[MaxNumVertices];
     nk_draw_index indexData[MaxNumIndices];
