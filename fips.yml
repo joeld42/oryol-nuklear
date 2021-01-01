@@ -5,6 +5,7 @@
 imports:
     fips-nuklear:
         git:    https://github.com/joeld42/fips-nuklear
+        branch: tapnik-fixes
     oryol:
         git:    https://github.com/floooh/oryol.git
 
