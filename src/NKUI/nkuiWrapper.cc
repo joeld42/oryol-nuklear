@@ -223,7 +223,13 @@ nkuiWrapper::NewFrame() {
         }
     }
     if (Input::MouseAttached()) {
-        const glm::vec2& mousePos = Input::MousePosition();
+        
+        // JBD: Hack for retina display
+        const DisplayAttrs& attrs = Gfx::DisplayAttrs();
+        const float width = float(attrs.FramebufferWidth);
+        float displayScale = width/1280.0f;
+        
+        const glm::vec2& mousePos = Input::MousePosition() * displayScale;
         int x = int(mousePos.x);
         int y = int(mousePos.y);
         bool lmb = Input::MouseButtonPressed(MouseButton::Left)|Input::MouseButtonDown(MouseButton::Left);
@@ -289,6 +295,10 @@ nkuiWrapper::Draw() {
     const float width = float(attrs.FramebufferWidth);
     const float height = float(attrs.FramebufferHeight);
     NKUIShader::vsParams vsParams;
+    
+    //float displayScale = width/1280.0f;
+    //displayScale = 1.0f;
+    
     vsParams.proj = glm::ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
 
     // render draw commands
@@ -311,8 +321,8 @@ nkuiWrapper::Draw() {
         }
         Gfx::ApplyScissorRect((int)cmd->clip_rect.x,
                               (int)(height - (cmd->clip_rect.y + cmd->clip_rect.h)),
-                              (int)(cmd->clip_rect.w),
-                              (int)(cmd->clip_rect.h));
+                              (int)(cmd->clip_rect.w) ,
+                              (int)(cmd->clip_rect.h) );
         if (cmd->elem_count > 0) {
             Gfx::Draw(PrimitiveGroup(elm_offset, cmd->elem_count));
             elm_offset += cmd->elem_count;
